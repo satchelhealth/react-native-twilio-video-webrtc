@@ -307,7 +307,7 @@ RCT_EXPORT_METHOD(disconnect) {
     [participants addObject:[p toJSON]];
   }
 
-  [self sendEventWithName:roomDidConnect body:@{ @"roomName" : room.name , @"participants" : participants }];
+  [self sendEventWithName:roomDidConnect body:@{ @"roomName" : room.name , @"participants" : participants , @"localVideoTrack" : [self.localVideoTrack toJSON] ,  @"localAudioTrack" : [self.localAudioTrack toJSON] , @"localParticipantIdentity" : room.localParticipant.identity }];
 }
 
 - (void)room:(TVIRoom *)room didDisconnectWithError:(nullable NSError *)error {
