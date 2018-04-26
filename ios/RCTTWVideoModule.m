@@ -92,7 +92,9 @@ RCT_EXPORT_MODULE();
 
       // Lookup for the given trackId
       for (TVIVideoTrack *videoTrack in participant.videoTracks) {
-        [videoTrack addRenderer:view];
+        if ([videoTrack.trackId isEqualToString:trackId]) {
+          [videoTrack addRenderer:view];
+        }
       }
     }
   }
