@@ -344,7 +344,13 @@ RCT_EXPORT_METHOD(disconnect) {
 }
 
 - (void)room:(TVIRoom *)room participantDidDisconnect:(TVIParticipant *)participant {
-  [self sendEventWithName:roomParticipantDidDisconnect body:@{ @"roomName": room.name, @"participant": [participant toJSON] }];
+  NSMutableArray *videoTracks = [NSMutableArray array];
+
+  for (TVIVideoTrack *videoTrack in participant.videoTracks) {
+    [videoTracks addObject:[videoTrack toJSON]];
+  }
+
+  [self sendEventWithName:roomParticipantDidDisconnect body:@{ @"roomName": room.name, @"participant": [participant toJSON], @"videoTracks" : videoTracks }];
 }
 
 # pragma mark - TVIParticipantDelegate
