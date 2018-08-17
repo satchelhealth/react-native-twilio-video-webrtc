@@ -19,7 +19,7 @@
 @implementation TVITrack(RCTTWSerializable)
 
 - (id)toJSON {
-  return @{ @"trackId": self.trackId };
+  return @{ @"id": self.trackId, @"isMuted": self.enabled ? @NO : @YES };
 }
 
 @end

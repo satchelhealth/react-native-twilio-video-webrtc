@@ -92,7 +92,9 @@ RCT_EXPORT_MODULE();
 
       // Lookup for the given trackId
       for (TVIVideoTrack *videoTrack in participant.videoTracks) {
-        [videoTrack addRenderer:view];
+        if ([videoTrack.trackId isEqualToString:trackId]) {
+          [videoTrack addRenderer:view];
+        }
       }
     }
   }
@@ -307,7 +309,7 @@ RCT_EXPORT_METHOD(disconnect) {
     [participants addObject:[p toJSON]];
   }
 
-  [self sendEventWithName:roomDidConnect body:@{ @"roomName" : room.name , @"participants" : participants }];
+  [self sendEventWithName:roomDidConnect body:@{ @"roomName" : room.name , @"participants" : participants , @"localVideoTrack" : [self.localVideoTrack toJSON] ,  @"localAudioTrack" : [self.localAudioTrack toJSON] , @"localParticipantIdentity" : room.localParticipant.identity }];
 }
 
 - (void)room:(TVIRoom *)room didDisconnectWithError:(nullable NSError *)error {
@@ -342,7 +344,18 @@ RCT_EXPORT_METHOD(disconnect) {
 }
 
 - (void)room:(TVIRoom *)room participantDidDisconnect:(TVIParticipant *)participant {
-  [self sendEventWithName:roomParticipantDidDisconnect body:@{ @"roomName": room.name, @"participant": [participant toJSON] }];
+  NSMutableArray *videoTracks = [NSMutableArray array];
+  NSMutableArray *audioTracks = [NSMutableArray array];
+
+  for (TVIVideoTrack *videoTrack in participant.videoTracks) {
+    [videoTracks addObject:[videoTrack toJSON]];
+  }
+
+  for (TVIVideoTrack *audioTrack in participant.audioTracks) {
+    [audioTracks addObject:[audioTrack toJSON]];
+  }
+
+  [self sendEventWithName:roomParticipantDidDisconnect body:@{ @"roomName": room.name, @"participant": [participant toJSON], @"videoTracks" : videoTracks, @"audioTracks" : audioTracks }];
 }
 
 # pragma mark - TVIParticipantDelegate
